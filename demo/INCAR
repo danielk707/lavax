@@ -1,0 +1,19 @@
+
+SYSTEM = W Crystal
+NPAR = 4
+NCORE = 32
+
+ISTART = 0
+ISMEAR = 0
+SIGMA = 0.1
+
+ENMAX = 300
+# ENCUT = 100
+
+IBRION = 0
+NSW = 10
+POTIM = 1.0
+ISIF = 0
+
+#EDIFF = 1E-8
+#EDIFFG = -0.01
