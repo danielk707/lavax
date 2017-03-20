@@ -40,7 +40,7 @@ public class lavax {
   }
 
   public static String make_poscar(double latt_const, Vec3 a1, Vec3 a2, Vec3 a3,
-                                   List<Particle> P1, List<Particle> P2, boolean using_Cartesian = true) {
+                                   List<Particle> P1, List<Particle> P2, boolean using_Cartesian) {
     StringBuilder sb = new StringBuilder();
 
     sb.append("BCC Xx \n");
@@ -491,7 +491,7 @@ public class lavax {
                               a1.multiply(latt_const[0]),
                               a2.multiply(latt_const[0]),
                               a3.multiply(latt_const[0]),
-                              bad_pot, good_pot);
+                              bad_pot, good_pot, true);
         writer.print(content);
         writer.close();
         

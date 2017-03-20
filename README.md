@@ -1,17 +1,14 @@
-# lavax
+# LAVAX
 LAmmps VAsp eXchanger, written in java.
 
 To compile lavax first run
 ```bash
 autoreconf -i
 ```
-Create a build directory
-```bash
-mkdir build && cd build
 ```
 Configure the environment:
 ```bash
-../configure --prefix=DESIRED_INSTALL_DIRECTORY
+./configure --prefix=DESIRED_INSTALL_DIRECTORY
 ```
 then
 ```bash

@@ -9,8 +9,8 @@ dnl AC_CONFIG_HEADERS([config.h])
 
 AC_SEARCH_LIBS([pthread_create], [pthread])
 
-AC_PROG_JAVA
-AC_PROG_JAVAC
+dnl AX_PROG_JAVA
+dnl AX_PROG_JAVAC
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 
