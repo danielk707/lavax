@@ -15,7 +15,8 @@ public class lavax {
   static private boolean USE_ADAPTIVE_TIMESTEP;
   static private double  MAX_DISTANCE;
   static private double  MAX_TIMESTEP;
-  
+  static private double  POTENTIAL_DEPARTURE_DISTANCE;
+    
   public static class Tungsten extends Particle {
 
     public static double getMass() { return 183.85; }
@@ -256,7 +257,7 @@ public class lavax {
       Process p1 = Runtime.getRuntime().exec(LAMMPS_COMMAND + " -in predictor.in");
       // PRINT_PROCESS(p1);
       p1.waitFor();
-      return parse_lammps_neighbor(new File("neigh.dump"), 2.0);
+      return parse_lammps_neighbor(new File("neigh.dump"), POTENTIAL_DEPARTURE_DISTANCE);
     }
     catch (Throwable e) {
       System.out.println("Error " + e.getMessage());
@@ -276,6 +277,9 @@ public class lavax {
       LAMMPS_COMMAND = prop.getProperty("LAMMPS_COMMAND");
       INIT_POSCAR    = prop.getProperty("INIT_POSCAR");
       LVX_ITERATIONS = Integer.parseInt(prop.getProperty("LVX_ITERATIONS"));
+
+      POTENTIAL_DEPARTURE_DISTANCE =
+        Double.parseDouble(prop.getProperty("POTENTIAL_DEPARTURE_DISTANCE"));
 
       USE_ADAPTIVE_TIMESTEP = Boolean.parseBoolean(prop.getProperty("USE_ADAPTIVE_TIMESTEP"));
       MAX_DISTANCE   = Double.parseDouble(prop.getProperty("MAX_DISTANCE"));
@@ -422,6 +426,7 @@ public class lavax {
     List<Particle> P = new ArrayList<Particle>();
     parse_poscar(new File(INIT_POSCAR), latt_const, a1, a2, a3, P);
 
+    // Map each particle to a unique index:
     Map<Integer, Particle> part_map = new HashMap<Integer, Particle>();
 
     int idx = 1;
@@ -430,7 +435,7 @@ public class lavax {
       ++idx;
     }
     
-    // Construct static crystal:
+    // Convenience variables:
     double L = latt_const[0];
     double xrep = a1.getX();
     double yrep = a2.getY();
@@ -505,7 +510,6 @@ public class lavax {
         // Parse CONTCAR:
         P.clear();
         parse_poscar(new File("CONTCAR"), latt_const, a1, a2, a3, P);
-        // System.out.println(P.size());
 
         // Construct new Particle map:
         part_map.clear();
@@ -514,14 +518,14 @@ public class lavax {
           part_map.put(idx, p);
           ++idx;
         }
-        // String[] files = {"XDATCAR", "CONTCAR", "CHG",
-        //                   "CHGCAR", "DOSCAR", "EIGENVAL",
-        //                   "OSZICAR", "PCDAT", "vasprun.xml",
-        //                   "OUTCAR", "INCAR", "WAVECAR",
-        //                   "IBZKPT", "POSCAR"};
-        backup_files(new String[]{"XDATCAR", "CONTCAR"},i);
+        
+        String[] files = {"XDATCAR", "CONTCAR", "CHG",
+                          "CHGCAR", "DOSCAR", "EIGENVAL",
+                          "OSZICAR", "PCDAT", "vasprun.xml",
+                          "OUTCAR", "INCAR", "WAVECAR",
+                          "IBZKPT", "POSCAR"};
+        backup_files(files, i);
         System.out.println("------------------------------");
-
         
       } catch (Throwable e) {
         System.out.println("Error " + e.getMessage());
