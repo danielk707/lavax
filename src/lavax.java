@@ -327,7 +327,8 @@ public class lavax {
   }
 
   private static void backup_files(String[] file_names, int unique_idx) {
-    String folder_name = "./RUN" + unique_idx;
+    String format_string = "%0" + String.valueOf(LVX_ITERATIONS).length() + "d";
+    String folder_name = "./RUN" + String.format(format_string, unique_idx);
     Path newDirPath = Paths.get(folder_name);
 
     if (!Files.exists(newDirPath)) {
@@ -372,8 +373,8 @@ public class lavax {
         e.printStackTrace();
       }
     }
-    System.out.println("Remember to add a LAMMPS potential file as specified in predictor.in");
-    System.out.println("and a properly concatenated POTCAR file for VASP");
+    System.out.println("Remember to add a LAMMPS potential file as specified in predictor.in " +
+    "and a properly concatenated POTCAR file for VASP");
 
   }
 
