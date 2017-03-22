@@ -269,7 +269,12 @@ public class lavax {
   private static void read_conf_file(File f) {
     try {
       InputStream is = new FileInputStream(f);
-      Properties prop = new Properties();
+      Properties prop = new Properties() {
+          @Override
+          public String getProperty(String key) {
+            return super.getProperty(key).replaceAll("#.*", "").trim();
+          }
+        };
 
       prop.load(is);
       
