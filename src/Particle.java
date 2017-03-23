@@ -2,9 +2,9 @@ import java.util.List;
 
 public class Particle {
 
-  Vec3 pos;
-  Vec3 vel;
-  List<Integer> neighbors;
+  private Vec3 pos;
+  private Vec3 vel;
+  private List<Integer> neighbors;
   
   public Particle(Vec3 pos, Vec3 vel) {
     this.pos = pos;
@@ -24,7 +24,7 @@ public class Particle {
   public Vec3 getPos() {
     return pos;
   }
-
+  
   public List<Integer> getNeighbors() {
     return neighbors;
   }

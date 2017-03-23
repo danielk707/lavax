@@ -16,6 +16,10 @@ public class lavax {
   static private double  MAX_DISTANCE;
   static private double  MAX_TIMESTEP;
   static private double  POTENTIAL_DEPARTURE_DISTANCE;
+  static private String  LAMMPS_POTENTIAL_FILE;
+  static private String  VASP_GOOD_POTENTIAL_SYMBOL;
+  static private String  VASP_BAD_POTENTIAL_SYMBOL;
+  static private String  LAMMPS_ATOMIC_SYMBOL;
     
   public static class Tungsten extends Particle {
 
@@ -49,6 +53,7 @@ public class lavax {
     sb.append(a1 + "\n");
     sb.append(a2 + "\n");
     sb.append(a3 + "\n");
+    sb.append(VASP_BAD_POTENTIAL_SYMBOL + (P2.size() > 0 ? " " + VASP_GOOD_POTENTIAL_SYMBOL : "") + "\n");
     sb.append(P1.size() + (P2.size() > 0 ? " " + P2.size() : "") + "\n");
     sb.append(using_Cartesian ? "Cartesian\n" : "Direct\n");
 
@@ -287,8 +292,13 @@ public class lavax {
         Double.parseDouble(prop.getProperty("POTENTIAL_DEPARTURE_DISTANCE"));
 
       USE_ADAPTIVE_TIMESTEP = Boolean.parseBoolean(prop.getProperty("USE_ADAPTIVE_TIMESTEP"));
-      MAX_DISTANCE   = Double.parseDouble(prop.getProperty("MAX_DISTANCE"));
-      MAX_TIMESTEP   = Double.parseDouble(prop.getProperty("MAX_TIMESTEP"));
+      MAX_DISTANCE          = Double.parseDouble(prop.getProperty("MAX_DISTANCE"));
+      MAX_TIMESTEP          = Double.parseDouble(prop.getProperty("MAX_TIMESTEP"));
+
+      LAMMPS_POTENTIAL_FILE      = prop.getProperty("LAMMPS_POTENTIAL_FILE");
+      VASP_GOOD_POTENTIAL_SYMBOL = prop.getProperty("VASP_GOOD_POTENTIAL_SYMBOL");
+      VASP_BAD_POTENTIAL_SYMBOL  = prop.getProperty("VASP_BAD_POTENTIAL_SYMBOL");
+      LAMMPS_ATOMIC_SYMBOL       = prop.getProperty("LAMMPS_ATOMIC_SYMBOL");
     }
     catch (Throwable e) {
       System.out.println("Error " + e.getMessage());
@@ -403,6 +413,8 @@ public class lavax {
 
   private static void update_LAMMPS_script() {
     try {
+      replaceAll_in_file(new File("predictor.in"), "pair_coeff.*",
+                         "pair_coeff * * " + LAMMPS_POTENTIAL_FILE + " " + LAMMPS_ATOMIC_SYMBOL);
       replaceAll_in_file(new File("predictor.in"), "run.*", "run " + (VASP_NSW+3)*5);
       replaceAll_in_file(new File("predictor.in"), "^timestep.*", "timestep " + VASP_POTIM/5);
     }
