@@ -3,6 +3,7 @@ import java.util.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.file.*;
+import java.util.regex.*;
 
 public class lavax {
 
@@ -20,6 +21,7 @@ public class lavax {
   static private String  VASP_GOOD_POTENTIAL_SYMBOL;
   static private String  VASP_BAD_POTENTIAL_SYMBOL;
   static private String  LAMMPS_ATOMIC_SYMBOL;
+  static private double  POTCAR_ATOMIC_MASS;
     
   public static class Tungsten extends Particle {
 
@@ -88,7 +90,7 @@ public class lavax {
     sb.append(String.format("%.8f %.8f zlo zhi\n", 0.0, zhi));
 
     sb.append("\nMasses\n\n");
-    sb.append(String.format("%d %.8f\n", 1, Tungsten.getMass()));
+    sb.append(String.format("%d %.8f\n", 1, POTCAR_ATOMIC_MASS));
     
     sb.append("\nAtoms\n\n");
 
@@ -336,6 +338,29 @@ public class lavax {
     return success;
   }
 
+  private static Double find_mass_in_POTCAR() {
+    try {
+      File f = new File("POTCAR");
+      Scanner sc = new Scanner(f);
+      
+      while (sc.hasNext()){
+        String line = sc.nextLine();
+        Matcher m = Pattern.compile("POMASS\\s*=\\s*(\\d+\\.\\d+)").matcher(line);
+
+        while (m.find()) {
+          System.out.println(m.group());
+          return Double.parseDouble(m.group(1));
+        }
+
+      }
+    }
+    catch (Throwable e) {
+      System.out.println("Error " + e.getMessage());
+      e.printStackTrace();
+    }
+    return 0.0;
+  }
+  
   private static void backup_files(String[] file_names, int unique_idx) {
     String format_string = "%0" + String.valueOf(LVX_ITERATIONS).length() + "d";
     String folder_name = "./RUN" + String.format(format_string, unique_idx);
@@ -431,6 +456,9 @@ public class lavax {
     if (!init_check2()) {
       return;
     }
+
+    POTCAR_ATOMIC_MASS = find_mass_in_POTCAR();
+    
     init_INCAR();
     update_LAMMPS_script();
 
